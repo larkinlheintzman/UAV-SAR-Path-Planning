@@ -1,0 +1,34 @@
+language: python
+compiler: g++
+dist: trusty
+before_install:
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - sudo apt-get update -qq
+cache: pip
+env:
+  - BOOST_VERSION="1.67.0"
+  - BOOST_VERSION="1.65.1"
+  - BOOST_VERSION="1.64.0"
+  - BOOST_VERSION="1.63.0"
+  - BOOST_VERSION="1.62.0"
+  - BOOST_VERSION="1.61.0"
+  - BOOST_VERSION="1.59.0"
+install:
+  # C++14
+  - export BOOST_VERSION_="${BOOST_VERSION//./_}"
+  - export BOOST_ROOT=`pwd`"/boost_${BOOST_VERSION_}"
+  - sudo apt-get install -qq g++-6 gcc git
+  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90
+  - wget https://sourceforge.net/projects/boost/files/boost/${BOOST_VERSION}/boost_${BOOST_VERSION//./_}.tar.gz
+  - tar zxf boost_${BOOST_VERSION_}.tar.gz
+  - echo ${BOOST_VERSION}
+  - ls ${BOOST_ROOT}
+  - pip install cython pytest scipy numpy pytest-cov
+  - python setup.py build_ext --inplace
+python:
+  - "2.7"
+  - "3.6"
+script:
+  - py.test --cov=./
+after_success:
+  - codecov

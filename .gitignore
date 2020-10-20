@@ -1,0 +1,11 @@
+venv
+LP model
+waypoints.json
+terrain_mapped.mp4
+terrain_2_gif.gif
+terrain_(-200.0, 200.0)(-200.0, 200.0)(0, 70)10.npy
+risk-aware-path.pdf
+rgp_bezier
+e_x_y_data.pkl
+.pytest_cache
+z__test__

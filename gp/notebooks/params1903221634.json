@@ -1,0 +1,60 @@
+{
+    "IS_HEATMAP_DYN": false,
+    "T": 150,
+    "_x_shape": 400,
+    "_y_shape": 400,
+    "dt": 0.25,
+    "dynheatmap_log_file": "results/000_190322-163414_test/dynheatmap_190322-163414.mp4",
+    "exp_description": "Generate a heatmap",
+    "exp_id": 0,
+    "exp_name": "test",
+    "exp_results_dir": "results/000_190322-163414_test",
+    "exp_str": "000_190322-163414_test",
+    "heatmap_log_file": "results/000_190322-163414_test/heatmap_190322-163414.png",
+    "history_log_file": "results/000_190322-163414_test/p_history_190322-163414.npy",
+    "hmax": 50.0,
+    "hmin": -50.0,
+    "iter_steps": 600,
+    "max_search_steps": 100000,
+    "num_humans": 1,
+    "num_iter": 10000,
+    "num_searchers": 3,
+    "param_log_file": "results/000_190322-163414_test/params_190322-163414.log",
+    "random_motion_init": true,
+    "random_pos": true,
+    "res": 0.25,
+    "save_terrain": false,
+    "sweep_bounds": [
+        [
+            16.66666666666667,
+            50.0
+        ],
+        [
+            -50.0,
+            50.0
+        ]
+    ],
+    "sx": [
+        33.33333333333333,
+        -50.0
+    ],
+    "terrainType": "random",
+    "time_str": "190322-163414",
+    "tqdm": null,
+    "xlims": [
+        -50.0,
+        50.0
+    ],
+    "xmax": 50.0,
+    "xmin": -50.0,
+    "ylims": [
+        -50.0,
+        50.0
+    ],
+    "ymax": 50.0,
+    "ymin": -50.0,
+    "zlims": [
+        -50.0,
+        50.0
+    ]
+}

@@ -1,0 +1,3 @@
+[submodule "pyboostrtree"]
+	path = pyboostrtree
+	url = https://github.com/gavincangan/pyboostrtree.git
