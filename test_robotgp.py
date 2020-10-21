@@ -169,16 +169,34 @@ def main(iteration = 0, parameters = -1):
 
 if __name__ == "__main__":
 
-    kentland_heatmap = 'C:\\Users\\Larkin\\planning_llh_bgc\\LP model\\analysis\\outputs\\kentland_hiker\\ic_2_con_hiker_t8.csv'
-    hmpark_heatmap = 'C:\\Users\\Larkin\\planning_llh_bgc\\LP model\\analysis\\outputs\\hmpark_hiker\\ic_2_con_hiker_t8.csv'
-    # self.params.setdefault('lp_filename', 'C:\\Users\\Larkin\\planning_llh_bgc\\LP model\\analysis\\outputs\\kentland_hiker\\ic_2_con_hiker_t8.csv')
-    # self.params.setdefault('lin_feat_filename', 'C:\\Users\\Larkin\\ags_grabber\\matlab_data_locale\\BW_LFandInac_Zelev_kentland.mat')
-    n_max = 6
-    s_max = 2
-    global_fail_max = 1000
-    global_fails = 0
-    avg_runs = 5
-    start_time = time.time()
+    params = ({
+        'save_folder': 'hmpark_n{}_s{}_rc'.format(n, s),
+        'lp_model': 'custom',
+        'opt_iterations': 1,
+        'path_style': 'rc',
+        'stats_name': 'hmpark',
+        'anchor_point': [36.891640, -81.524214],  # hmpark
+        'num_searchers': s,
+        'num_robots': n,
+        'lp_filename': hmpark_heatmap,
+        'plot_data': True, # plots data in plotly viewer upon finishing
+        'save_data': False # saves risk-cost and waypoint related data in json upon finishing
+    })
+    params = Default(params).params
+    torch.cuda.empty_cache()
+    torch.cuda.ipc_collect()
+    main(iteration=0, parameters=params)
+
+    # kentland_heatmap = 'C:\\Users\\Larkin\\planning_llh_bgc\\LP model\\analysis\\outputs\\kentland_hiker\\ic_2_con_hiker_t8.csv'
+    # hmpark_heatmap = 'C:\\Users\\Larkin\\planning_llh_bgc\\LP model\\analysis\\outputs\\hmpark_hiker\\ic_2_con_hiker_t8.csv'
+    # # self.params.setdefault('lp_filename', 'C:\\Users\\Larkin\\planning_llh_bgc\\LP model\\analysis\\outputs\\kentland_hiker\\ic_2_con_hiker_t8.csv')
+    # # self.params.setdefault('lin_feat_filename', 'C:\\Users\\Larkin\\ags_grabber\\matlab_data_locale\\BW_LFandInac_Zelev_kentland.mat')
+    # n_max = 6
+    # s_max = 2
+    # global_fail_max = 1000
+    # global_fails = 0
+    # avg_runs = 5
+    # start_time = time.time()
 
     # for n in range(1, n_max + 1):
     #     for s in range(2,s_max + 1):
@@ -344,85 +362,85 @@ if __name__ == "__main__":
     #                         global_fails += 1
     #
     # # -----------------------------------------------------------------------------------------------
-
-    for n in range(5, n_max + 1):
-        for s in range(2, s_max + 1):
-            params = ({
-                'save_folder': 'hmpark_n{}_s{}_unopt'.format(n, s),
-                'lp_model': 'custom',
-                'opt_iterations': 3,
-                'path_style': 'basic',
-                'stats_name': 'hmpark',
-                'anchor_point': [36.891640, -81.524214],  # hmpark
-                'num_searchers': s,
-                'num_robots': n,
-                'lp_filename': hmpark_heatmap
-            })
-            params = Default(params).params
-
-            counter = 0
-            while counter < avg_runs and global_fails <= global_fail_max:  # number of averaging runs
-                torch.cuda.empty_cache()
-                torch.cuda.ipc_collect()
-                try:
-                    main(iteration=counter, parameters=params)
-                    counter += 1
-                except AttributeError as e:
-                    print("\n\n ------- bad optimization, re trying ---------- \n")
-                    global_fails += 1
-
-    # -----------------------------------------------------------------------------------------------
-
-    for n in range(1, n_max + 1):
-        for s in range(2, s_max + 1):
-            params = ({
-                'save_folder': 'hmpark_n{}_s{}_sweep'.format(n, s),
-                'lp_model': 'custom',
-                'opt_iterations': 1,
-                'path_style': 'sweep',
-                'stats_name': 'hmpark',
-                'anchor_point': [36.891640, -81.524214],  # hmpark
-                'num_searchers': s,
-                'num_robots': n,
-                'lp_filename': hmpark_heatmap
-            })
-            params = Default(params).params
-
-            counter = 0
-            while counter < avg_runs and global_fails <= global_fail_max:  # number of averaging runs
-                torch.cuda.empty_cache()
-                torch.cuda.ipc_collect()
-                try:
-                    main(iteration=counter, parameters=params)
-                    counter += 1
-                except AttributeError as e:
-                    print("\n\n ------- bad optimization, re trying ---------- \n")
-                    global_fails += 1
-
-    # -----------------------------------------------------------------------------------------------
-
-    for n in range(1, n_max + 1):
-        for s in range(2, s_max + 1):
-            params = ({
-                'save_folder': 'hmpark_n{}_s{}_rc'.format(n, s),
-                'lp_model': 'custom',
-                'opt_iterations': 1,
-                'path_style': 'rc',
-                'stats_name': 'hmpark',
-                'anchor_point': [36.891640, -81.524214],  # hmpark
-                'num_searchers': s,
-                'num_robots': n,
-                'lp_filename': hmpark_heatmap
-            })
-            params = Default(params).params
-
-            counter = 0
-            while counter < avg_runs and global_fails <= global_fail_max:  # number of averaging runs
-                torch.cuda.empty_cache()
-                torch.cuda.ipc_collect()
-                try:
-                    main(iteration=counter, parameters=params)
-                    counter += 1
-                except AttributeError as e:
-                    print("\n\n ------- bad optimization, re trying ---------- \n")
-                    global_fails += 1
+    #
+    # for n in range(5, n_max + 1):
+    #     for s in range(2, s_max + 1):
+    #         params = ({
+    #             'save_folder': 'hmpark_n{}_s{}_unopt'.format(n, s),
+    #             'lp_model': 'custom',
+    #             'opt_iterations': 3,
+    #             'path_style': 'basic',
+    #             'stats_name': 'hmpark',
+    #             'anchor_point': [36.891640, -81.524214],  # hmpark
+    #             'num_searchers': s,
+    #             'num_robots': n,
+    #             'lp_filename': hmpark_heatmap
+    #         })
+    #         params = Default(params).params
+    #
+    #         counter = 0
+    #         while counter < avg_runs and global_fails <= global_fail_max:  # number of averaging runs
+    #             torch.cuda.empty_cache()
+    #             torch.cuda.ipc_collect()
+    #             try:
+    #                 main(iteration=counter, parameters=params)
+    #                 counter += 1
+    #             except AttributeError as e:
+    #                 print("\n\n ------- bad optimization, re trying ---------- \n")
+    #                 global_fails += 1
+    #
+    # # -----------------------------------------------------------------------------------------------
+    #
+    # for n in range(1, n_max + 1):
+    #     for s in range(2, s_max + 1):
+    #         params = ({
+    #             'save_folder': 'hmpark_n{}_s{}_sweep'.format(n, s),
+    #             'lp_model': 'custom',
+    #             'opt_iterations': 1,
+    #             'path_style': 'sweep',
+    #             'stats_name': 'hmpark',
+    #             'anchor_point': [36.891640, -81.524214],  # hmpark
+    #             'num_searchers': s,
+    #             'num_robots': n,
+    #             'lp_filename': hmpark_heatmap
+    #         })
+    #         params = Default(params).params
+    #
+    #         counter = 0
+    #         while counter < avg_runs and global_fails <= global_fail_max:  # number of averaging runs
+    #             torch.cuda.empty_cache()
+    #             torch.cuda.ipc_collect()
+    #             try:
+    #                 main(iteration=counter, parameters=params)
+    #                 counter += 1
+    #             except AttributeError as e:
+    #                 print("\n\n ------- bad optimization, re trying ---------- \n")
+    #                 global_fails += 1
+    #
+    # # -----------------------------------------------------------------------------------------------
+    #
+    # for n in range(1, n_max + 1):
+    #     for s in range(2, s_max + 1):
+    #         params = ({
+    #             'save_folder': 'hmpark_n{}_s{}_rc'.format(n, s),
+    #             'lp_model': 'custom',
+    #             'opt_iterations': 1,
+    #             'path_style': 'rc',
+    #             'stats_name': 'hmpark',
+    #             'anchor_point': [36.891640, -81.524214],  # hmpark
+    #             'num_searchers': s,
+    #             'num_robots': n,
+    #             'lp_filename': hmpark_heatmap
+    #         })
+    #         params = Default(params).params
+    #
+    #         counter = 0
+    #         while counter < avg_runs and global_fails <= global_fail_max:  # number of averaging runs
+    #             torch.cuda.empty_cache()
+    #             torch.cuda.ipc_collect()
+    #             try:
+    #                 main(iteration=counter, parameters=params)
+    #                 counter += 1
+    #             except AttributeError as e:
+    #                 print("\n\n ------- bad optimization, re trying ---------- \n")
+    #                 global_fails += 1
