@@ -164,7 +164,7 @@ def grab_features(anchor_point, extent, sample_dist = 10, heading = 0, save_file
                 # f.write(str(save_data))
 
     # save terrain as csv file (this method is pretty slow, but can compensate with interp)
-    [e,x,y,data,ll_pt] = get_terrain_map(lat_lon=anchor_point,
+    [_,e,x,y,data,ll_pt] = get_terrain_map(lat_lon=anchor_point,
                                          sample_dist = sample_dist,
                                          extent = extent,
                                          heading = heading)

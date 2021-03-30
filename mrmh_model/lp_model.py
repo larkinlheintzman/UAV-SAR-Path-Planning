@@ -17,9 +17,9 @@ def load_heatmap(filename, map_size, map_res, anchor_point):
     heatmap_center = my_data[0:2]
     if np.linalg.norm(heatmap_center - anchor_point) >= 0.01:
         print("Might have GPS center mismatch!!!")
-    find_pt = my_data[2:4] # leave out tactics for generating real lost person location
-    dim = int(np.sqrt(len(my_data[4:]))) # ASSUMING DATA IS MEANT TO BE SQUARE
-    z_data = my_data[4:].reshape([dim,dim])
+    # find_pt = my_data[2:4] # leave out tactics for generating real lost person location
+    dim = int(np.sqrt(len(my_data[2:]))) # ASSUMING DATA IS MEANT TO BE SQUARE
+    z_data = my_data[2:].reshape([dim,dim])
 
     # rescale z data to match map size
     scale_factor = map_res/(6.7*8)
@@ -42,17 +42,21 @@ def load_heatmap(filename, map_size, map_res, anchor_point):
     z_data_interp = (z_data_interp - np.min(z_data_interp))/np.max(z_data_interp)
 
     # cap find point at x coords
-    find_pt[0] = xcrds_center[0] if find_pt[0] <= xcrds_center[0] else find_pt[0]
-    find_pt[0] = xcrds_center[-1] if find_pt[0] >= xcrds_center[-1] else find_pt[0]
-
-    find_pt[1] = ycrds_center[0] if find_pt[1] <= ycrds_center[0] else find_pt[1]
-    find_pt[1] = ycrds_center[-1] if find_pt[1] >= ycrds_center[-1] else find_pt[1]
-
-    find_pt = np.floor(find_pt - xcrds_center[0]).astype(np.int) # put center in left hand corner
-
+    # find_pt[0] = xcrds_center[0] if find_pt[0] <= xcrds_center[0] else find_pt[0]
+    # find_pt[0] = xcrds_center[-1] if find_pt[0] >= xcrds_center[-1] else find_pt[0]
+    #
+    # find_pt[1] = ycrds_center[0] if find_pt[1] <= ycrds_center[0] else find_pt[1]
+    # find_pt[1] = ycrds_center[-1] if find_pt[1] >= ycrds_center[-1] else find_pt[1]
+    #
+    # find_pt = np.floor(find_pt - xcrds_center[0]).astype(np.int) # put center in left hand corner
+    find_pt = np.zeros(2) # trash for now
     return z_data_interp, find_pt # not sure if scaling is correct
 
 if __name__ == "__main__":
     # stuff
-    my_data = load_heatmap('LP model/analysis/outputs/ic_2_con_hiker_t12.csv', [20,20])
-    print(my_data)
+    my_data = load_heatmap('C:\\Users\\Larkin\\planning_llh_bgc\\LP model\\analysis\\outputs\\ic_1_con_hiker_t12.csv', [100,100], 10, [37.197730, -80.585233])
+    import matplotlib.pyplot as plt
+    plt.imshow(my_data[0])
+    plt.show()
+    print("done")
+

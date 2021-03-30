@@ -64,21 +64,21 @@ class Terrain(space.Space):
 
             print("collecting terrain data ...")
             terrain_location = self.params.get('anchor_point', False)
-            [e,x,y,data,cen_pt] = get_terrain_map(terrain_location, sample_dist = 2*self.res,
+            [e,_,x,y,data,cen_pt] = get_terrain_map(terrain_location, sample_dist = self.res,
                                       extent = self._xrange, heading=self.params.get('heading'), show_plot=False, verbosity=False)
             e = e - np.min(e)
 
             # interpolate terrain to match size/resolution of other layers
-            x_temp = np.linspace(0,self._xrange,np.int(self._xrange/(2*self.res))) # get correct size of terrain map
-            y_temp = np.linspace(0,self._xrange,np.int(self._xrange/(2*self.res)))
-            f = interpolate.interp2d(x_temp, y_temp, e, kind='quintic')
+            # x_temp = np.linspace(0,self._xrange,np.int(self._xrange/(2*self.res))) # get correct size of terrain map
+            # y_temp = np.linspace(0,self._xrange,np.int(self._xrange/(2*self.res)))
+            # f = interpolate.interp2d(x_temp, y_temp, e, kind='quintic')
             x_temp = np.linspace(0,self._xrange,np.int(self._xrange/(1*self.res)))
             y_temp = np.linspace(0,self._xrange,np.int(self._xrange/(1*self.res)))
-            e_interp = f(x_temp, y_temp)
+            # e_interp = f(x_temp, y_temp)
 
-            self.h = e_interp
+            self.h = e
 
-            self.terrain_data = [e_interp, x_temp, x_temp, data, cen_pt]
+            self.terrain_data = [e, x_temp, y_temp, data, cen_pt]
             print("terrain data collected!")
 
         if self.params.get('save_terrain', False):

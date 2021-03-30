@@ -158,7 +158,7 @@ def main(iteration = 0, parameters = -1):
                  mc_object = mc,
                  robot_paths = robot_paths_local,
                  searcher_paths = mc.searcher_class.searchers_list,
-                 smooth_paths = False,
+                 smooth_paths = True,
                  show_heatmap = True,
                  show_contours = True,
                  cs_name = 'thermal'
@@ -169,67 +169,127 @@ def main(iteration = 0, parameters = -1):
 
 if __name__ == "__main__":
 
-    params = ({
-        'save_folder': 'hmpark_n{}_s{}_rc'.format(n, s),
-        'lp_model': 'custom',
-        'opt_iterations': 1,
-        'path_style': 'rc',
-        'stats_name': 'hmpark',
-        'anchor_point': [36.891640, -81.524214],  # hmpark
-        'num_searchers': s,
-        'num_robots': n,
-        'lp_filename': hmpark_heatmap,
-        'plot_data': True, # plots data in plotly viewer upon finishing
-        'save_data': False # saves risk-cost and waypoint related data in json upon finishing
-    })
-    params = Default(params).params
-    torch.cuda.empty_cache()
-    torch.cuda.ipc_collect()
-    main(iteration=0, parameters=params)
+    # params = ({
+    #     'save_folder': 'hmpark_n{}_s{}_rc'.format(n, s),
+    #     'lp_model': 'custom',
+    #     'opt_iterations': 1,
+    #     'path_style': 'rc',
+    #     'stats_name': 'hmpark',
+    #     'anchor_point': [36.891640, -81.524214],  # hmpark
+    #     'num_searchers': s,
+    #     'num_robots': n,
+    #     'lp_filename': hmpark_heatmap,
+    #     'plot_data': True, # plots data in plotly viewer upon finishing
+    #     'save_data': True # saves risk-cost and waypoint related data in json upon finishing
+    # })
+    # self.params.setdefault('lp_filename', 'C:\\Users\\Larkin\\planning_llh_bgc\\LP model\\analysis\\outputs\\kentland_hiker\\ic_2_con_hiker_t8.csv')
+    # self.params.setdefault('lin_feat_filename', 'C:\\Users\\Larkin\\ags_grabber\\matlab_data_locale\\BW_LFandInac_Zelev_kentland.mat')
+    # params = Default(params).params
+    # torch.cuda.empty_cache()
+    # torch.cuda.ipc_collect()
+    # main(iteration=0, parameters=params)
 
-    # kentland_heatmap = 'C:\\Users\\Larkin\\planning_llh_bgc\\LP model\\analysis\\outputs\\kentland_hiker\\ic_2_con_hiker_t8.csv'
-    # hmpark_heatmap = 'C:\\Users\\Larkin\\planning_llh_bgc\\LP model\\analysis\\outputs\\hmpark_hiker\\ic_2_con_hiker_t8.csv'
-    # # self.params.setdefault('lp_filename', 'C:\\Users\\Larkin\\planning_llh_bgc\\LP model\\analysis\\outputs\\kentland_hiker\\ic_2_con_hiker_t8.csv')
-    # # self.params.setdefault('lin_feat_filename', 'C:\\Users\\Larkin\\ags_grabber\\matlab_data_locale\\BW_LFandInac_Zelev_kentland.mat')
-    # n_max = 6
-    # s_max = 2
-    # global_fail_max = 1000
-    # global_fails = 0
-    # avg_runs = 5
-    # start_time = time.time()
+    kentland_heatmap = 'C:\\Users\\Larkin\\planning_llh_bgc\\LP model\\analysis\\outputs\\ic_1_con_hiker_t12_kentland.csv'
+    hmpark_heatmap = 'C:\\Users\\Larkin\\planning_llh_bgc\\LP model\\analysis\\outputs\\ic_1_con_hiker_t12_hmpark.csv'
 
-    # for n in range(1, n_max + 1):
-    #     for s in range(2,s_max + 1):
-    #             params = ({
-    #                 'save_folder': 'kentland_n{}_s{}_basic'.format(n,s),
-    #                 'lp_model': 'custom',
-    #                 'opt_iterations': 25,
-    #                 'path_style': 'basic',
-    #                 'stats_name': 'kentland',
-    #                 'anchor_point': [37.197730, -80.585233], # kentland
-    #                 'num_searchers': s,
-    #                 'num_robots': n,
-    #                 'lp_filename': kentland_heatmap
-    #             })
-    #             params = Default(params).params
-    #
-    #             counter = 0
-    #             while counter < avg_runs and global_fails <= global_fail_max: # number of averaging runs
-    #                     torch.cuda.empty_cache()
-    #                     torch.cuda.ipc_collect()
-    #                     try:
-    #                         try:
-    #                             main(iteration = counter, parameters=params)
-    #                         except RuntimeError as e:
-    #                             print("\n\n ------ bad memory, re trying ------\n")
-    #                             global_fails += 1
-    #                             continue
-    #                         counter += 1
-    #                     except AttributeError as e:
-    #                         print("\n\n ------- bad optimization, re trying ---------- \n")
-    #                         global_fails += 1
+    kentland_linfeat = 'C:\\Users\\Larkin\\ags_grabber\\matlab_data\\BW_LFandInac_Zelev_kentland.mat' # filename used for linear features/inac
+    hmpark_linfeat = 'C:\\Users\\Larkin\\ags_grabber\\matlab_data\\BW_LFandInac_Zelev_hmpark.mat' # filename used for linear features/inac
+
+    # KENTLAND case
+
+    if True:
+        n_max = 6
+        s_max = 2
+        global_fail_max = 1000
+        global_fails = 0
+        avg_runs = 5
+        start_time = time.time()
+
+        for n in range(3, n_max + 1):
+            for s in range(2,s_max + 1):
+                    params = ({
+                        'lp_model': 'custom',
+                        'opt_iterations': 2,
+                        'path_style': 'basic',
+                        'stats_name': 'kentland',
+                        'anchor_point': [37.197730, -80.585233], # kentland
+                        'num_searchers': s,
+                        'num_robots': n,
+                        'lp_filename': kentland_heatmap,
+                        'lin_feat_filename': kentland_linfeat
+                    })
+                    params['save_folder'] = '{}_n{}_s{}_{}'.format(
+                        params['stats_name'],n,s,params['path_style'])
+
+                    params = Default(params).params
+
+                    counter = 0
+                    while counter < avg_runs and global_fails <= global_fail_max: # number of averaging runs
+                            torch.cuda.empty_cache()
+                            torch.cuda.ipc_collect()
+                            try:
+                                try:
+                                    main(iteration = counter, parameters=params)
+                                    print("done run")
+                                except RuntimeError as e:
+                                    print("\n\n ------ bad memory, re trying ------\n")
+                                    global_fails += 1
+                                    continue
+                                counter += 1
+                            except AttributeError as e:
+                                print("\n\n ------- bad optimization, re trying ---------- \n")
+                                global_fails += 1
 
     #-----------------------------------------------------------------------------------------------
+
+    # HMPARK case
+    if False:
+        n_max = 6
+        s_max = 2
+        global_fail_max = 1000
+        global_fails = 0
+        avg_runs = 5
+        start_time = time.time()
+
+        for n in range(3, n_max + 1):
+            for s in range(2,s_max + 1):
+                    params = ({
+                        'lp_model': 'custom',
+                        'opt_iterations': 25,
+                        'path_style': 'basic',
+                        'stats_name': 'hmpark',
+                        'anchor_point': [36.891640, -81.524214], # hmpark
+                        'num_searchers': s,
+                        'num_robots': n,
+                        'lp_filename': hmpark_heatmap,
+                        'lin_feat_filename': hmpark_linfeat
+                    })
+                    params['save_folder'] = '{}_n{}_s{}_{}'.format(
+                        params['stats_name'],n,s,params['path_style'])
+
+                    params = Default(params).params
+
+                    counter = 0
+                    while counter < avg_runs and global_fails <= global_fail_max: # number of averaging runs
+                            torch.cuda.empty_cache()
+                            torch.cuda.ipc_collect()
+                            try:
+                                try:
+                                    main(iteration = counter, parameters=params)
+                                    print("done run")
+                                except RuntimeError as e:
+                                    print("\n\n ------ bad memory, re trying ------\n")
+                                    global_fails += 1
+                                    continue
+                                counter += 1
+                            except AttributeError as e:
+                                print("\n\n ------- bad optimization, re trying ---------- \n")
+                                global_fails += 1
+
+    #-----------------------------------------------------------------------------------------------
+
+
+
     #
     # for n in range(1, n_max + 1):
     #     for s in range(2,s_max + 1):

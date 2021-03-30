@@ -51,8 +51,8 @@ class Default:
         self.params.setdefault('searcher_path_num', 200 ) # number of points for ind. searcher path
 
         # gis/run paramters
-        # self.params.setdefault('anchor_point', [36.891640, -81.524214]) # hmpark
-        self.params.setdefault('anchor_point', [37.197730, -80.585233]) # kentland
+        self.params.setdefault('anchor_point', [36.891640, -81.524214]) # hmpark
+        # self.params.setdefault('anchor_point', [37.197730, -80.585233]) # kentland
         # self.params.setdefault('anchor_point', [36.660460, -81.543921]) # grayson
         self.params.setdefault('heading', 0)  # direction of trajectories from mag north
         self.params.setdefault('stats_name', 'kentland') # saves risk-cost and waypoint related data in json upon finishing
@@ -77,9 +77,9 @@ class Default:
 
         # lost person model parameters
         self.params.setdefault('lp_model', 'custom') # options: 'custom', 'naive', 'ring'
-        self.params.setdefault('lp_filename', 'C:\\Users\\Larkin\\planning_llh_bgc\\LP model\\analysis\\outputs\\kentland_hiker\\ic_2_con_hiker_t8.csv') # filename to load for heatmap data
+        self.params.setdefault('lp_filename', 'C:\\Users\\Larkin\\planning_llh_bgc\\LP model\\analysis\\outputs\\ic_1_con_hiker_t12_kentland.csv') # filename to load for heatmap data
         # should make sure the heatmap file used is derived from the correct BWLF mat file
-        self.params.setdefault('lin_feat_filename', 'C:\\Users\\Larkin\\ags_grabber\\matlab_data_locale\\BW_LFandInac_Zelev_kentland.mat') # filename used for linear features/inac
+        self.params.setdefault('lin_feat_filename', 'C:\\Users\\Larkin\\ags_grabber\\matlab_data\\BW_LFandInac_Zelev_kentland.mat') # filename used for linear features/inac
         self.params.setdefault('ring_mobi', [0.6e3, 1.8e3, 3.2e3, 9.9e3]) # mobility for ring model heatmap
         self.params.setdefault('lp_threshold', 0.2) # hotspot cutoff threshold on normalized heatmap (ind values in 0-1)
         self.params.setdefault('t_to_f_iter', 5000) # number of iterations to settle on time to find
@@ -91,8 +91,8 @@ class Default:
 
 
         # data parameters
-        self.params.setdefault('plot_data', False) # plots data in plotly viewer upon finishing
-        self.params.setdefault('save_data', True) # saves risk-cost and waypoint related data in json upon finishing
+        self.params.setdefault('plot_data', True) # plots data in plotly viewer upon finishing
+        self.params.setdefault('save_data', False) # saves risk-cost and waypoint related data in json upon finishing
         self.params.setdefault('save_folder', 'kentland_n3_s2_rc') # which folder to save data in
 
 

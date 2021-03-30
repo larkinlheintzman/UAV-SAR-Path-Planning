@@ -37,47 +37,34 @@ def analyze_runs(data_path, fields_of_interest):
 
 if __name__ == "__main__":
     # translate saved data into averages
+    base_folder = "C:\\Users\\Larkin\\planning_llh_bgc\\results\\kentland-revision\\"
     files = [
-             ["C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n1_s2_basic",
-              "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n2_s2_basic",
-              "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n3_s2_basic",
-              "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n4_s2_basic",
-              "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n5_s2_basic",
-              "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n6_s2_basic"],
+             [base_folder + "kentland_n1_s2_sweep",
+              base_folder + "kentland_n2_s2_sweep",
+              base_folder + "kentland_n3_s2_sweep",
+              base_folder + "kentland_n4_s2_sweep",
+              base_folder + "kentland_n5_s2_sweep",
+              base_folder + "kentland_n6_s2_sweep"],
 
-             # ["C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n1_s2_unopt",
-             #  "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n2_s2_unopt",
-             #  "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n3_s2_unopt",
-             #  "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n4_s2_unopt",
-             #  "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n5_s2_unopt",
-             #  "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n6_s2_unopt"],
+             [base_folder + "kentland_n1_s2_rc",
+              base_folder + "kentland_n2_s2_rc",
+              base_folder + "kentland_n3_s2_rc",
+              base_folder + "kentland_n4_s2_rc",
+              base_folder + "kentland_n5_s2_rc",
+              base_folder + "kentland_n6_s2_rc"],
 
-             ["C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n1_s2_sweep",
-              "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n2_s2_sweep",
-              "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n3_s2_sweep",
-              "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n4_s2_sweep",
-              "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n5_s2_sweep",
-              "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n6_s2_sweep"],
-
-             ["C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n1_s2_rc",
-              "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n2_s2_rc",
-              "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n3_s2_rc",
-              "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n4_s2_rc",
-              "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n5_s2_rc",
-              "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n6_s2_rc"],
-
-            # ["C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n1_s2_ring",
-            #  "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n2_s2_ring",
-            #  "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n3_s2_ring",
-            #  "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n4_s2_ring",
-            #  "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n5_s2_ring",
-            #  "C:\\Users\\Larkin\\planning_llh_bgc\\results\\hmpark_n6_s2_ring"],
+             [base_folder + "kentland_n1_s2_basic",
+              base_folder + "kentland_n2_s2_basic",
+              base_folder + "kentland_n3_s2_basic",
+              base_folder + "kentland_n4_s2_basic",
+              base_folder + "kentland_n5_s2_basic",
+              base_folder + "kentland_n6_s2_basic"],
             ]
 
     keysoi = {'min_cost_old' : -1, 'min_risk_old' : -1, 'min_len_old' : -1, 'search_advantage' : -1, 'time_to_find' : -1, 'find_percentage' : -1}
     plot_data = []
-    color_list = ['mediumseagreen','royalblue', 'brown', 'orangered', 'teal']
-    er_scale = 0.5
+    color_list = ['royalblue', 'brown', 'mediumseagreen', 'orangered', 'teal']
+    er_scale = 2
     x_ticks = [1,2,3,4,5,6]
     y_order = []
     marker_list = ['diamond', 'x']
@@ -108,7 +95,7 @@ if __name__ == "__main__":
     # max_len = 1
     for i, ydat in enumerate(y_data):
         yplt = ydat[3]
-        fig.add_trace(go.Scatter(x = x_ticks, y = yplt, mode = "lines+markers", name=ydat[0], marker=dict(size = 10), marker_symbol = marker_list[0],
+        fig.add_trace(go.Scatter(x = x_ticks, y = yplt - ydat[2], mode = "lines+markers", name=ydat[0], marker=dict(size = 10), marker_symbol = marker_list[0],
                                  line = dict(color = color_list[i], width = 3),
                                  error_y=dict(type='data', array = er_scale*np.array(errors['min_risk_old']), visible=True)), secondary_y = False)
         yplt = ydat[2]
@@ -125,8 +112,9 @@ if __name__ == "__main__":
     fig.update_layout(title='Metrics', autosize=True, width=1500, height=600,
                         margin=dict(l=100, r=100, b=65, t=90),
                         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
-                            font=dict(family="Courier New, monospace",size=24, color="Black"),
-                        xaxis = dict(tickmode = 'array', tickvals = x_ticks))
+                        font=dict(family="Courier New, monospace",size=24, color="Black"),
+                        xaxis = dict(tickmode = 'array', tickvals = x_ticks),
+                        yaxis = dict(showexponent = 'all', exponentformat = 'e'))
 
     fig.update_xaxes(title_text = "UAV Team Size (N)")
 

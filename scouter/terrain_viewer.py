@@ -21,6 +21,10 @@ def linear_features(parameters):
 
     bwlf = np.fliplr(np.rot90(np.rot90(bwlf)))
     bwinac = np.fliplr(np.rot90(np.rot90(bwinac)))
+    szelev = np.fliplr(np.rot90(np.rot90(szelev)))
+    # bwlf = np.rot90(np.rot90(np.rot90(np.fliplr(np.rot90(bwlf)))))
+    # bwinac = np.rot90(np.rot90(np.rot90(np.fliplr(np.rot90(bwinac)))))
+    # szelev = np.rot90(np.rot90(np.rot90(np.fliplr(np.rot90(szelev)))))
 
     # rescale z data to match map size
     map_res = parameters['res']
@@ -43,21 +47,31 @@ def linear_features(parameters):
     lf_idx = np.nonzero(bwlf[xcrds_center,:][:,ycrds_center])
     inac_idx = np.nonzero(bwinac[xcrds_center,:][:,ycrds_center])
 
+    # get elevation of feature points
+    lf_elev_pts = szelev[xcrds_center,:][:,ycrds_center] * (bwlf[xcrds_center,:][:,ycrds_center] != 0)
+    inac_elev_pts = szelev[xcrds_center,:][:,ycrds_center] * (bwinac[xcrds_center,:][:,ycrds_center] != 0)
+    lf_elev_pts = lf_elev_pts[np.nonzero(lf_elev_pts)]
+    inac_elev_pts = inac_elev_pts[np.nonzero(inac_elev_pts)]
+    # normalize elevation to have zero at lowest point
+    if lf_elev_pts.size != 0:
+        lf_elev_pts = lf_elev_pts - np.min(lf_elev_pts)
+    if inac_elev_pts.size != 0:
+        inac_elev_pts = inac_elev_pts - np.min(inac_elev_pts)
+
     lf_pts = np.array(lf_idx)*feat_res + parameters['xlims'][0] # in units of meters now
     inac_pts = np.array(inac_idx)*feat_res + parameters['xlims'][0]
 
-    # flip y axis
-    # lf_pts[1] = parameters['xlims'][1] - lf_pts[1] + parameters['xlims'][0]
-    # inac_pts[1] = parameters['xlims'][1] - inac_pts[1] + parameters['xlims'][0]
+    # pair linear feature points and inac points with their elevation
 
-    # might still need to do some rotations/flips
+    # lf_pts = np.vstack([lf_pts, lf_elev_pts])
+    # inac_pts = np.vstack([inac_pts, inac_elev_pts])
 
     return lf_pts, inac_pts
 
 def plot_all(parameters, mc_object, robot_paths, searcher_paths, title = "Sim", smooth_paths = True,
              show_heatmap = True, show_contours = False, cs_name = 'thermal'):
 
-    linear_features(parameters)
+    # linear_features(parameters)
 
     plot_data = []
     color_list = ['blue', 'green', 'cyan', 'magenta', 'lime']
@@ -91,7 +105,8 @@ def plot_all(parameters, mc_object, robot_paths, searcher_paths, title = "Sim", 
             x_idx = np.argmin(np.abs(x_terr - pt[0]))
             y_idx = np.argmin(np.abs(y_terr - pt[1]))
             if z_terr_func.ev(pt[0], pt[1]) >= (z_traj[j]-4):
-                z_traj[j] = z_terr_func.ev(pt[0], pt[1]) + 4
+                z_traj[j] = z_terr_func.ev(pt[0], pt[1]) + 10
+                pass
             else:
                 pass
 
@@ -102,7 +117,7 @@ def plot_all(parameters, mc_object, robot_paths, searcher_paths, title = "Sim", 
 
         # add some smoothing for long trajectories
         if smooth_paths:
-            tck, unused = interpolate.splprep([x_traj, y_traj, z_traj], k=5, s=750)
+            tck, unused = interpolate.splprep([x_traj, y_traj, z_traj], k=5, s=500)
             unew = np.linspace(0,1,30)
             smoothed_traj = interpolate.splev(unew, tck)
             x_traj_smoothed = smoothed_traj[0]
@@ -156,14 +171,24 @@ def plot_all(parameters, mc_object, robot_paths, searcher_paths, title = "Sim", 
 
     # get linear feature info
     [lf_points, inac_points] = linear_features(parameters)
+
     lf_points = np.vstack([lf_points, z_terr_func.ev(lf_points[0], lf_points[1])+1])
     inac_points = np.vstack([inac_points, z_terr_func.ev(inac_points[0], inac_points[1])+1])
 
+
     plot_data.append(go.Scatter3d(z = lf_points[2], x = lf_points[0], y = lf_points[1],
-                                  mode = "markers", name="L. Feat.", marker=dict(size = 5)))
+                                  mode = "markers", name="L. Feat.", marker=dict(size = 3, color = 'skyblue')))
 
     plot_data.append(go.Scatter3d(z = inac_points[2], x = inac_points[0], y = inac_points[1],
-                                  mode = "markers", name="Inac. Areas", marker=dict(size = 5)))
+                                  mode = "markers", name="Inac. Areas", marker=dict(size = 3, color = 'salmon')))
+
+    # add ipp to plot
+    x_ipp = (np.max(x_terr) + np.min(x_terr))/2.0
+    y_ipp = (np.max(y_terr) + np.min(x_terr))/2.0
+    z_ipp = z_terr_func.ev(x_ipp, y_ipp) + 4
+
+    plot_data.append(go.Scatter3d(z = [z_ipp], x = [x_ipp], y = [y_ipp], name="IPP", mode = "markers",
+                                  marker=dict(color="orange", size = 12, line=dict(color='black',width=2))))
 
     fig = go.Figure(data = plot_data)
     fig.update_layout(title=title, autosize=False, width=2000, height=1200,
@@ -184,31 +209,31 @@ if __name__ == "__main__":
              mc_object = loaded_data['mc_object'],
              robot_paths = loaded_data['robot_paths'],
              searcher_paths = loaded_data['searcher_paths'],
-             title = "Whitethorn, [37.210264, -80.559236]",
-             show_heatmap = False,
+             title = "bozoo, [37.210264, -80.559236]",
+             show_heatmap = True,
              show_contours = True,
              cs_name = 'earth')
 
-    with open("bozoo_save_[37.474015, -80.868333].pkl",'rb') as f:
-        loaded_data = pkl.load(f)
-
-    plot_all(parameters = loaded_data['params'],
-             mc_object = loaded_data['mc_object'],
-             robot_paths = loaded_data['robot_paths'],
-             searcher_paths = loaded_data['searcher_paths'],
-             title = "Mt. Rogers, [36.65711, -81.543333]",
-             show_heatmap = False,
-             show_contours = True,
-             cs_name = 'earth')
-
-    with open("bozoo_save_[37.476261, -80.87046].pkl",'rb') as f:
-        loaded_data = pkl.load(f)
-
-    plot_all(parameters = loaded_data['params'],
-             mc_object = loaded_data['mc_object'],
-             robot_paths = loaded_data['robot_paths'],
-             searcher_paths = loaded_data['searcher_paths'],
-             title = "Bozoo [37.476914, -80.865864]",
-             show_heatmap = False,
-             show_contours = True,
-             cs_name = 'earth')
+    # with open("bozoo_save_[37.474015, -80.868333].pkl",'rb') as f:
+    #     loaded_data = pkl.load(f)
+    #
+    # plot_all(parameters = loaded_data['params'],
+    #          mc_object = loaded_data['mc_object'],
+    #          robot_paths = loaded_data['robot_paths'],
+    #          searcher_paths = loaded_data['searcher_paths'],
+    #          title = "Mt. Rogers, [36.65711, -81.543333]",
+    #          show_heatmap = False,
+    #          show_contours = True,
+    #          cs_name = 'earth')
+    #
+    # with open("bozoo_save_[37.476261, -80.87046].pkl",'rb') as f:
+    #     loaded_data = pkl.load(f)
+    #
+    # plot_all(parameters = loaded_data['params'],
+    #          mc_object = loaded_data['mc_object'],
+    #          robot_paths = loaded_data['robot_paths'],
+    #          searcher_paths = loaded_data['searcher_paths'],
+    #          title = "Bozoo [37.476914, -80.865864]",
+    #          show_heatmap = False,
+    #          show_contours = True,
+    #          cs_name = 'earth')
